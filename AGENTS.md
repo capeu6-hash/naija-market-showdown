@@ -11,3 +11,5 @@
 - Product cost/supplier data lives in `product_private` (no RLS policies, server-only via admin client); the browser may only read `products`. Why: keeps cost prices unreadable by customers.
 - Admin access uses server-checked ADMIN_EMAIL/ADMIN_PASSWORD secrets and an HMAC token (`src/lib/admin-token.server.ts`); never put admin credentials in VITE_ vars. Why: VITE_ values ship to every visitor.
 - Orders (items + delivery fee from `src/lib/delivery.ts`) are priced server-side; payment is manual bank transfer and only the admin marks an order paid. Why: browser totals can be forged.
+- Product images uploaded by admin go to the private `product-images` bucket via a server function and are stored as long-lived signed URLs. Why: the workspace blocks public buckets and admin is not a signed-in Cloud user.
+- Search/filter/sort runs client-side over `public_products` (`src/lib/catalog.ts`). Why: small catalog, instant suggestions without extra requests.

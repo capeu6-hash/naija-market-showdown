@@ -22,10 +22,10 @@ export const createOrder = createServerFn({ method: "POST" })
     const ids = data.items.map((i) => i.id);
     const [{ data: prods, error }, { data: priv }] = await Promise.all([
       supabaseAdmin.from("products").select("id, name, selling_price, stock").in("id", ids),
-      supabaseAdmin.from("product_private").select("product_id, cost_price_private").in("product_id", ids),
+      supabaseAdmin.from("product_private").select("product_id, cost_price_private, delivery_cost").in("product_id", ids),
     ]);
     if (error) throw new Error(error.message);
-    const costs = new Map((priv ?? []).map((p) => [p.product_id, Number(p.cost_price_private)]));
+    const costs = new Map((priv ?? []).map((p) => [p.product_id, Number(p.cost_price_private) + Number(p.delivery_cost)]));
     const lines = data.items.map((i) => {
       const p = prods?.find((x) => x.id === i.id);
       if (!p) throw new Error("A product in your cart is no longer available");

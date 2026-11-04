@@ -129,16 +129,19 @@ export type Database = {
       product_private: {
         Row: {
           cost_price_private: number
+          delivery_cost: number
           product_id: string
           supplier_id: string | null
         }
         Insert: {
           cost_price_private: number
+          delivery_cost?: number
           product_id: string
           supplier_id?: string | null
         }
         Update: {
           cost_price_private?: number
+          delivery_cost?: number
           product_id?: string
           supplier_id?: string | null
         }
@@ -168,30 +171,42 @@ export type Database = {
       }
       products: {
         Row: {
+          category: string
           created_at: string
           description: string | null
           id: string
           image_url: string | null
+          images: string[]
           name: string
+          old_price: number | null
           selling_price: number
+          sold_count: number
           stock: number
         }
         Insert: {
+          category?: string
           created_at?: string
           description?: string | null
           id?: string
           image_url?: string | null
+          images?: string[]
           name: string
+          old_price?: number | null
           selling_price: number
+          sold_count?: number
           stock?: number
         }
         Update: {
+          category?: string
           created_at?: string
           description?: string | null
           id?: string
           image_url?: string | null
+          images?: string[]
           name?: string
+          old_price?: number | null
           selling_price?: number
+          sold_count?: number
           stock?: number
         }
         Relationships: []
@@ -199,20 +214,29 @@ export type Database = {
       suppliers: {
         Row: {
           business_name: string
+          cost_price: number | null
           created_at: string
           id: string
+          location: string | null
+          supplies: string | null
           whatsapp: string | null
         }
         Insert: {
           business_name: string
+          cost_price?: number | null
           created_at?: string
           id?: string
+          location?: string | null
+          supplies?: string | null
           whatsapp?: string | null
         }
         Update: {
           business_name?: string
+          cost_price?: number | null
           created_at?: string
           id?: string
+          location?: string | null
+          supplies?: string | null
           whatsapp?: string | null
         }
         Relationships: []
@@ -221,30 +245,42 @@ export type Database = {
     Views: {
       public_products: {
         Row: {
+          category: string | null
           created_at: string | null
           description: string | null
           id: string | null
           image_url: string | null
+          images: string[] | null
           name: string | null
+          old_price: number | null
           selling_price: number | null
+          sold_count: number | null
           stock: number | null
         }
         Insert: {
+          category?: string | null
           created_at?: string | null
           description?: string | null
           id?: string | null
           image_url?: string | null
+          images?: string[] | null
           name?: string | null
+          old_price?: number | null
           selling_price?: number | null
+          sold_count?: number | null
           stock?: number | null
         }
         Update: {
+          category?: string | null
           created_at?: string | null
           description?: string | null
           id?: string | null
           image_url?: string | null
+          images?: string[] | null
           name?: string | null
+          old_price?: number | null
           selling_price?: number | null
+          sold_count?: number | null
           stock?: number | null
         }
         Relationships: []
