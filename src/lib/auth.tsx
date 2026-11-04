@@ -15,7 +15,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const loadProfile = useCallback(async (u: User | null) => {
     if (!u) { setProfile(null); return; }
     const { data } = await supabase.from("profiles").select("id, full_name, email, phone, address").eq("id", u.id).maybeSingle();
-    setProfile(data ?? { id: u.id, full_name: (u.user_metadata?.full_name as string) ?? "", email: u.email ?? null, phone: null, address: null });
+    setProfile(data ?? { id: u.id, full_name: (u.user_metadata?.["full_name"] as string) ?? "", email: u.email ?? null, phone: null, address: null });
   }, []);
 
   useEffect(() => {
