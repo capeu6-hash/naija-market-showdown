@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { deliveryFee } from "./delivery";
+import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
 const orderInput = z.object({
   customer_name: z.string().trim().min(2).max(120),
@@ -16,8 +17,9 @@ const orderInput = z.object({
 
 // Creates an order awaiting bank transfer; prices and delivery fee computed on the server.
 export const createOrder = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
   .inputValidator((d: z.infer<typeof orderInput>) => orderInput.parse(d))
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const ids = data.items.map((i) => i.id);
     const [{ data: prods, error }, { data: priv }] = await Promise.all([
@@ -42,7 +44,7 @@ export const createOrder = createServerFn({ method: "POST" })
       .insert({
         customer_name: data.customer_name, customer_email: data.customer_email || null, phone: data.phone,
         country: data.country, state: data.state, town: data.town, region: data.region, address: data.address,
-        subtotal, delivery_fee: fee, total, order_ref: ref, status: "awaiting_transfer",
+        subtotal, delivery_fee: fee, total, order_ref: ref, status: "awaiting_transfer", user_id: context.userId,
       })
       .select("id")
       .single();
