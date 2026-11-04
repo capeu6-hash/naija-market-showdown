@@ -2,6 +2,6 @@
 {"capability":"code","source":"github","outcome":"migrate","status":"done","next_action":null},
 {"capability":"schema","source":"drizzle migrations","outcome":"migrate","status":"done","next_action":null},
 {"capability":"records","source":"old database","outcome":"migrate","status":"pending","next_action":"user exports products/suppliers/orders CSVs"},
-{"capability":"auth","source":"admin email/password secrets","outcome":"preserve","status":"pending","next_action":"set ADMIN_EMAIL, ADMIN_PASSWORD, ADMIN_SESSION_SECRET"},
-{"capability":"verification","source":"-","outcome":"verify","status":"pending","next_action":"build + storefront check"}
+{"capability":"auth","source":"admin email/password secrets","outcome":"preserve","status":"pending","next_action":"admin sign-in not yet tested"},
+{"capability":"verification","source":"-","outcome":"verify","status":"done","next_action":"build + storefront check"}
 ]
