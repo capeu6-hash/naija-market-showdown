@@ -6,7 +6,7 @@ import { Minus, Plus, Copy, CheckCircle2, Loader2 } from "lucide-react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { useCart, naira } from "@/lib/cart";
 import { createOrder, markTransferSent, getOrderStatus } from "@/lib/shop.functions";
-import { BANK, COUNTRIES, LAGOS_AREAS, NG_STATES, deliveryFee } from "@/lib/delivery";
+import { BANK, COUNTRIES, LAGOS_AREAS, NG_STATES, STORE_WHATSAPP, deliveryFee } from "@/lib/delivery";
 
 export const Route = createFileRoute("/checkout")({
   head: () => ({
@@ -167,7 +167,12 @@ function CheckoutView() {
             </div>
           )}
 
-          {step === "done" && placed && <PaymentStatus ref_={placed.ref} total={placed.total} />}
+          {step === "done" && placed && (
+            <div className="space-y-4">
+              <PaymentStatus ref_={placed.ref} total={placed.total} />
+              <a target="_blank" rel="noopener noreferrer" href={`https://wa.me/${STORE_WHATSAPP}?text=${encodeURIComponent(`Hello ShopArena NG, I have paid ${naira(placed.total)} for order ${placed.ref} (${f.name}). Please confirm.`)}`} className="block rounded-xl bg-success py-3 text-center text-sm font-bold text-success-foreground">Confirm order on WhatsApp</a>
+            </div>
+          )}
         </section>
 
         <aside className="order-1 h-fit rounded-2xl bg-card p-5 shadow-sm md:sticky md:top-20 md:order-2">

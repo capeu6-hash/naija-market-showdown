@@ -21,7 +21,8 @@ export function AiBulkAdd({ token, suppliers, onPublished }: { token: string; su
   const onFile = async (file: File) => {
     const XLSX = await import("xlsx");
     const wb = XLSX.read(await file.arrayBuffer());
-    const sheet = wb.Sheets[wb.SheetNames[0]];
+    const sheet = wb.Sheets[wb.SheetNames[0] ?? ""];
+    if (!sheet) { toast.error("That file has no sheets"); return; }
     const csv = XLSX.utils.sheet_to_csv(sheet);
     setText(csv.trim());
     toast.success(`Loaded ${csv.trim().split("\n").length} lines from ${file.name}`);

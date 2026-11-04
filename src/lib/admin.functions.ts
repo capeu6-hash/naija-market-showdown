@@ -160,10 +160,10 @@ export const uploadProductImage = createServerFn({ method: "POST" })
     const db = await admin(data.token);
     const m = /^data:(image\/(png|jpe?g|webp|gif));base64,(.+)$/.exec(data.dataUrl);
     if (!m) throw new Error("Please upload a PNG, JPG, WEBP or GIF image");
-    const bytes = Uint8Array.from(atob(m[3]), (c) => c.charCodeAt(0));
-    const ext = m[2] === "jpeg" ? "jpg" : m[2];
+    const bytes = Uint8Array.from(atob(m[3]!), (c) => c.charCodeAt(0));
+    const ext = m[2] === "jpeg" ? "jpg" : m[2]!;
     const path = `${crypto.randomUUID()}.${ext}`;
-    const { error } = await db.storage.from("product-images").upload(path, bytes, { contentType: m[1] });
+    const { error } = await db.storage.from("product-images").upload(path, bytes, { contentType: m[1]! });
     if (error) throw new Error(error.message);
     const { data: s, error: se } = await db.storage.from("product-images").createSignedUrl(path, 60 * 60 * 24 * 365 * 10);
     if (se || !s) throw new Error(se?.message ?? "Could not create image link");
