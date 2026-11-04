@@ -128,10 +128,6 @@ function ShopView() {
           </>
         )}
       </main>
-      <footer className="border-t border-border bg-background px-4 py-6 pb-24 text-center text-xs text-muted-foreground md:pb-6">
-        <p>© {new Date().getFullYear()} ShopArena NG · Pay by bank transfer</p>
-        <Link to="/login" className="mt-2 inline-block underline">Admin Login</Link>
-      </footer>
       {count > 0 && (
         <div className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-background p-3 md:hidden">
           <Link to="/checkout" className="block rounded-lg bg-success py-3 text-center font-semibold text-success-foreground">

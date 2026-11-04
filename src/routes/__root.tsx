@@ -12,7 +12,6 @@ import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { CartProvider } from "../lib/cart";
-import { AuthProvider } from "../lib/auth";
 import { Toaster } from "../components/ui/sonner";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 
@@ -121,12 +120,10 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-      <AuthProvider>
-        <CartProvider>
-          <Outlet />
-          <Toaster position="top-center" />
-        </CartProvider>
-      </AuthProvider>
+      <CartProvider>
+        <Outlet />
+        <Toaster position="top-center" />
+      </CartProvider>
     </QueryClientProvider>
   );
 }

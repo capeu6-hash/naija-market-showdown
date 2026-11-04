@@ -1,5 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useAuth } from "@/lib/auth";
+import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -68,14 +67,6 @@ function CheckoutView() {
   const [f, setF] = useState({ name: "", phone: "", email: "", country: "Nigeria", state: "Lagos", town: "", region: "", address: "" });
   const set = (k: keyof typeof f, v: string) => setF((p) => ({ ...p, [k]: v }));
   const isNg = f.country === "Nigeria";
-  const { user, profile, ready } = useAuth();
-  const navigate = useNavigate();
-  useEffect(() => {
-    if (ready && !user) { toast.error("Please Sign In to complete order"); navigate({ to: "/login", search: { redirect: "/checkout" }, replace: true }); }
-  }, [ready, user, navigate]);
-  useEffect(() => {
-    if (profile) setF((p) => ({ ...p, name: p.name || profile.full_name, phone: p.phone || (profile.phone ?? ""), email: p.email || (profile.email ?? ""), address: p.address || (profile.address ?? "") }));
-  }, [profile]);
 
   const subtotal = placed?.subtotal ?? cartTotal;
   const fee = placed?.fee ?? deliveryFee(f.country, f.state, f.region);
@@ -83,7 +74,6 @@ function CheckoutView() {
   const summary = placed?.lines ?? items.map((i) => ({ name: i.name, qty: i.qty, price: i.selling_price }));
 
   const submit = async (): Promise<void> => {
-    if (!user) { toast.error("Please Sign In to complete order"); navigate({ to: "/login", search: { redirect: "/checkout" } }); return; }
     if (f.name.trim().length < 2) { toast.error("Enter your full name"); return; }
     if (!/^\+?\d{10,15}$/.test(f.phone)) { toast.error("Enter a valid phone / WhatsApp number"); return; }
     if (f.email && !/^\S+@\S+\.\S+$/.test(f.email)) { toast.error("Email looks wrong"); return; }

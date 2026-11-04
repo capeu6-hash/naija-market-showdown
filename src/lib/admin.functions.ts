@@ -198,27 +198,3 @@ export const confirmOrderPaid = createServerFn({ method: "POST" })
     }
     return { ok: true };
   });
-
-// Customers list for admin (never includes passwords — those are hashed by the auth system).
-export const listUsers = createServerFn({ method: "POST" })
-  .inputValidator((d: { token: string }) => tokenOnly.parse(d))
-  .handler(async ({ data }) => {
-    const db = await admin(data.token);
-    const [{ data: profs, error }, { data: ords }] = await Promise.all([
-      db.from("profiles").select("id, full_name, email, phone, created_at").order("created_at", { ascending: false }),
-      db.from("orders").select("user_id").not("user_id", "is", null),
-    ]);
-    if (error) throw new Error(error.message);
-    const counts = new Map<string, number>();
-    for (const o of ords ?? []) if (o.user_id) counts.set(o.user_id, (counts.get(o.user_id) ?? 0) + 1);
-    return (profs ?? []).map((p) => ({ ...p, total_orders: counts.get(p.id) ?? 0 }));
-  });
-
-export const deleteUser = createServerFn({ method: "POST" })
-  .inputValidator((d: { token: string; id: string }) => z.object({ token: z.string(), id: z.string().uuid() }).parse(d))
-  .handler(async ({ data }) => {
-    const db = await admin(data.token);
-    const { error } = await db.auth.admin.deleteUser(data.id);
-    if (error) throw new Error(error.message);
-    return { ok: true };
-  });
