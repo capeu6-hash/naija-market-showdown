@@ -26,5 +26,3 @@ export function deliveryFee(country: string, state: string, region: string): num
 // WhatsApp number for order confirmation (international format, no +).
 export const STORE_WHATSAPP = "2348089778840";
 
-// Payment details shown to customers.
-export const BANK = { name: "OPay", accountName: "Chukwuemeka Columbus", accountNumber: "8089778840" };

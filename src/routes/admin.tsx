@@ -8,6 +8,8 @@ import { SalesAnalytics } from "@/components/SalesAnalytics";
 import { AiBulkAdd } from "@/components/admin/AiBulkAdd";
 import { ProductForm, emptyProduct, type ProductDraft } from "@/components/admin/ProductForm";
 import { SupplierForm, type SupplierDraft } from "@/components/admin/SupplierForm";
+import { BankSettings } from "@/components/admin/BankSettings";
+import { Button } from "@/components/ui/button";
 import { naira } from "@/lib/cart";
 import { adminLogin, getAdminDashboard, confirmOrderPaid, deleteProduct, deleteSupplier } from "@/lib/admin.functions";
 
@@ -30,7 +32,7 @@ const TOKEN_KEY = "shoparena_admin";
 export type Dashboard = Awaited<ReturnType<typeof getAdminDashboard>>;
 const field = "w-full rounded-lg border border-input bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring";
 const btn = "w-full rounded-lg bg-foreground py-2 text-sm font-semibold text-background disabled:opacity-50";
-const TABS = ["Products", "Suppliers", "Orders", "AI Bulk Add"] as const;
+const TABS = ["Products", "Suppliers", "Orders", "AI Bulk Add", "Bank Details"] as const;
 
 function AdminPage() {
   const [token, setToken] = useState<string | null>(null);
@@ -111,7 +113,7 @@ function AdminView({ token, onLogout }: { token: string; onLogout: () => void })
 
       <div className="flex gap-2 overflow-x-auto">
         {TABS.map((t) => (
-          <button key={t} onClick={() => setTab(t)} className={`shrink-0 rounded-full px-4 py-2 text-sm font-semibold ${tab === t ? "bg-foreground text-background" : "bg-card text-foreground"}`}>{t}</button>
+          <Button variant="ghost" key={t} onClick={() => setTab(t)} className={`shrink-0 rounded-full px-4 py-2 text-sm font-semibold ${tab === t ? "bg-foreground text-background" : "bg-card text-foreground"}`}>{t}</Button>
         ))}
       </div>
 
@@ -139,7 +141,7 @@ function AdminView({ token, onLogout }: { token: string; onLogout: () => void })
                     <td>{p.stock}</td>
                     <td>{p.supplier_id ? supName.get(p.supplier_id) ?? "—" : "—"}</td>
                     <td className="whitespace-nowrap pr-3">
-                      <button aria-label={`Edit ${p.name}`} className="p-1.5" onClick={() => { setEditP({ id: p.id, name: p.name, description: p.description ?? "", image_url: p.image_url ?? "", images: p.images ?? [], category: p.category, cost_price_private: p.cost_price_private ?? 0, delivery_cost: p.delivery_cost, selling_price: p.selling_price, old_price: p.old_price, stock: p.stock, supplier_id: p.supplier_id }); window.scrollTo({ top: 0, behavior: "smooth" }); }}><Pencil className="h-4 w-4" /></button>
+                      <button aria-label={`Edit ${p.name}`} className="p-1.5" onClick={() => { setEditP({ id: p.id, name: p.name, description: p.description ?? "", image_url: p.image_url ?? "", images: p.images ?? [], category: p.category, cost_price_private: p.cost_price_private, delivery_cost: p.delivery_cost, selling_price: p.selling_price, old_price: p.old_price, stock: p.stock, supplier_id: p.supplier_id }); window.scrollTo({ top: 0, behavior: "smooth" }); }}><Pencil className="h-4 w-4" /></button>
                       <button aria-label={`Delete ${p.name}`} className="p-1.5 text-destructive" onClick={async () => { if (!confirm(`Delete ${p.name}?`)) return; try { await delP({ data: { token, id: p.id } }); toast.success("Deleted"); void load(); } catch (e) { toast.error((e as Error).message); } }}><Trash2 className="h-4 w-4" /></button>
                     </td>
                   </tr>
@@ -193,6 +195,8 @@ function AdminView({ token, onLogout }: { token: string; onLogout: () => void })
           </div>
         </section>
       )}
+
+      {tab === "Bank Details" && <BankSettings token={token} initial={dash.bank} onSaved={() => { void load(); }} />}
 
       {tab === "AI Bulk Add" && <AiBulkAdd token={token} suppliers={dash.suppliers} onPublished={() => { void load(); setTab("Products"); }} />}
     </main>

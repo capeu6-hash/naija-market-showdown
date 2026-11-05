@@ -1,7 +1,7 @@
 import { queryOptions } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
-export const CATEGORIES = ["Phones", "Fashion", "Shoes", "Bags", "Gadgets"] as const;
+export const CATEGORIES = ["Phones", "Laptops", "Fashion", "Shoes", "Bags", "Gadgets"] as const;
 export type SortKey = "newest" | "price_asc" | "price_desc" | "best";
 
 export type Product = {

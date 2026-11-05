@@ -6,7 +6,7 @@ import { Minus, Plus, Copy, CheckCircle2, Loader2 } from "lucide-react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { useCart, naira } from "@/lib/cart";
 import { createOrder, markTransferSent, getOrderStatus } from "@/lib/shop.functions";
-import { BANK, COUNTRIES, LAGOS_AREAS, NG_STATES, STORE_WHATSAPP, deliveryFee } from "@/lib/delivery";
+import { COUNTRIES, LAGOS_AREAS, NG_STATES, STORE_WHATSAPP, deliveryFee } from "@/lib/delivery";
 
 export const Route = createFileRoute("/checkout")({
   head: () => ({
@@ -157,9 +157,9 @@ function CheckoutView() {
               <h1 className="text-xl font-extrabold">PAY VIA BANK TRANSFER</h1>
               <p className="text-sm text-muted-foreground">Transfer the Total Amount to:</p>
               <div className="space-y-2 rounded-2xl border border-border bg-muted p-4 text-sm">
-                <Row k="Bank Name" v={BANK.name} />
-                <Row k="Account Name" v={BANK.accountName} />
-                <Row k="Account Number" v={BANK.accountNumber} onCopy={() => copy(BANK.accountNumber)} />
+                <Row k="Bank Name" v={placed.bank.name} />
+                <Row k="Account Name" v={placed.bank.accountName} />
+                <Row k="Account Number" v={placed.bank.accountNumber} onCopy={() => copy(placed.bank.accountNumber)} />
                 <Row k="Amount" v={naira(placed.total)} onCopy={() => copy(String(placed.total))} />
                 <Row k="Order Ref" v={placed.ref} />
               </div>

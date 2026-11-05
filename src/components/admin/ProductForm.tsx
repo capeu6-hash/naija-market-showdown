@@ -7,9 +7,9 @@ import { naira } from "@/lib/cart";
 
 export type ProductDraft = {
   id: string | null; name: string; description: string; image_url: string; images: string[]; category: string;
-  cost_price_private: number; delivery_cost: number; selling_price: number; old_price: number | null; stock: number; supplier_id: string | null;
+  cost_price_private: number | null; delivery_cost: number; selling_price: number; old_price: number | null; stock: number; supplier_id: string | null;
 };
-export const emptyProduct = (): ProductDraft => ({ id: null, name: "", description: "", image_url: "", images: [], category: "Phones", cost_price_private: 0, delivery_cost: 0, selling_price: 0, old_price: null, stock: 10, supplier_id: null });
+export const emptyProduct = (): ProductDraft => ({ id: null, name: "", description: "", image_url: "", images: [], category: "Phones", cost_price_private: null, delivery_cost: 0, selling_price: 0, old_price: null, stock: 10, supplier_id: null });
 
 const field = "w-full rounded-lg border border-input bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring";
 const label = "mb-1 block text-xs font-semibold";
@@ -52,7 +52,7 @@ export function ProductForm({ token, initial, suppliers, onDone, onCancel }: { t
       <h3 className="font-bold md:col-span-2">{f.id ? `Edit: ${initial.name}` : "Add Product"}</h3>
       <div className="md:col-span-2"><label className={label}>Name</label><input className={field} value={f.name} onChange={(e) => set("name", e.target.value)} /></div>
       <div><label className={label}>Selling Price (₦)</label><input className={field} type="number" min={0} value={f.selling_price || ""} onChange={(e) => set("selling_price", num(e.target.value))} /></div>
-      <div><label className={label}>Cost Price (₦)</label><input className={field} type="number" min={0} value={f.cost_price_private || ""} onChange={(e) => set("cost_price_private", num(e.target.value))} /></div>
+      <div><label className={label}>Cost Price (₦)</label><input className={field} type="number" min={0} value={f.cost_price_private || ""} placeholder="Unconfirmed" onChange={(e) => set("cost_price_private", e.target.value === "" ? null : num(e.target.value))} /></div>
       <div><label className={label}>Old Price (₦)</label><input className={field} type="number" min={0} value={f.old_price ?? ""} onChange={(e) => set("old_price", e.target.value === "" ? null : Number(e.target.value))} /></div>
       <div><label className={label}>Delivery Cost to you (₦)</label><input className={field} type="number" min={0} value={f.delivery_cost || ""} onChange={(e) => set("delivery_cost", num(e.target.value))} /></div>
       <div><label className={label}>Category</label><select className={field} value={f.category} onChange={(e) => set("category", e.target.value)}>{CATEGORIES.map((c) => <option key={c}>{c}</option>)}</select></div>
@@ -83,7 +83,7 @@ export function ProductForm({ token, initial, suppliers, onDone, onCancel }: { t
           </label>
         </div>
       </div>
-      <p className="text-sm md:col-span-2">Profit per item: <span className="font-bold text-success">{naira(productProfit(f.selling_price, f.cost_price_private, f.delivery_cost))}</span></p>
+      <p className="text-sm md:col-span-2">Profit per item: <span className="font-bold text-success">{f.cost_price_private === null ? "Cost unconfirmed" : naira(productProfit(f.selling_price, f.cost_price_private, f.delivery_cost))}</span></p>
       <div className="flex gap-2 md:col-span-2">
         <button disabled={busy || uploading} className="flex-1 rounded-lg bg-foreground py-2 text-sm font-semibold text-background disabled:opacity-50">{busy ? "Saving…" : "Save Product"}</button>
         <button type="button" onClick={onCancel} className="rounded-lg border border-border px-4 text-sm">Cancel</button>
