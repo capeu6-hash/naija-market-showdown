@@ -15,6 +15,13 @@
       "when": 1793807703816,
       "tag": "0001_catalog_search_suppliers_seed",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1793861662355,
+      "tag": "0002_bank_settings_and_unconfirmed_costs",
+      "breakpoints": true
     }
   ]
 }
