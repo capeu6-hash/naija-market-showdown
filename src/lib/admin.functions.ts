@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
+import { bankSchema } from "./bank";
 
 const tokenOnly = z.object({ token: z.string() });
 
@@ -28,13 +29,14 @@ export const getAdminDashboard = createServerFn({ method: "POST" })
   .inputValidator((d: { token: string }) => tokenOnly.parse(d))
   .handler(async ({ data }) => {
     const db = await admin(data.token);
-    const [sup, prods, priv, orders] = await Promise.all([
+    const [sup, prods, priv, orders, bank] = await Promise.all([
       db.from("suppliers").select("*").order("business_name"),
       db.from("products").select("*").order("created_at", { ascending: false }),
       db.from("product_private").select("*"),
       db.from("orders").select("*, order_items(*)").order("created_at", { ascending: false }).limit(500),
+      db.from("bank_settings").select("bank_name, account_name, account_number").eq("id", "store").single(),
     ]);
-    const err = sup.error || prods.error || priv.error || orders.error;
+    const err = sup.error || prods.error || priv.error || orders.error || bank.error;
     if (err) throw new Error(err.message);
     const costs = new Map((priv.data ?? []).map((p) => [p.product_id, p]));
     const paid = (orders.data ?? []).filter((o) => o.status === "paid");
@@ -42,7 +44,7 @@ export const getAdminDashboard = createServerFn({ method: "POST" })
     const totalRevenue = paid.reduce((s, o) => s + Number(o.total), 0);
     const products = (prods.data ?? []).map((p) => {
       const c = costs.get(p.id);
-      const cost = c ? Number(c.cost_price_private) : null;
+      const cost = c && c.cost_confirmed ? Number(c.cost_price_private) : null;
       const dc = c ? Number(c.delivery_cost) : 0;
       return {
         ...p,
@@ -55,6 +57,7 @@ export const getAdminDashboard = createServerFn({ method: "POST" })
       };
     });
     return {
+      bank: { name: bank.data?.bank_name ?? "", accountName: bank.data?.account_name ?? "", accountNumber: bank.data?.account_number ?? "" },
       suppliers: sup.data ?? [],
       products,
       orders: orders.data ?? [],
@@ -98,7 +101,7 @@ const productFields = z.object({
   image_url: z.string().trim().max(2000),
   images: z.array(z.string().max(2000)).max(10).default([]),
   category: z.string().trim().min(1).max(40),
-  cost_price_private: z.number().min(0),
+  cost_price_private: z.number().min(0).nullable(),
   delivery_cost: z.number().min(0).default(0),
   selling_price: z.number().positive(),
   old_price: z.number().min(0).nullable(),
@@ -120,7 +123,8 @@ async function writeProduct(db: Awaited<ReturnType<typeof admin>>, id: string | 
     if (error) throw new Error(error.message);
     pid = p.id;
   }
-  const { error: e2 } = await db.from("product_private").upsert({ product_id: pid!, supplier_id: d.supplier_id, cost_price_private: d.cost_price_private, delivery_cost: d.delivery_cost });
+  if (!pid) throw new Error("Could not save product");
+  const { error: e2 } = await db.from("product_private").upsert({ product_id: pid, supplier_id: d.supplier_id, cost_price_private: d.cost_price_private ?? 0, cost_confirmed: d.cost_price_private !== null, delivery_cost: d.delivery_cost });
   if (e2) throw new Error(e2.message);
 }
 
@@ -196,5 +200,15 @@ export const confirmOrderPaid = createServerFn({ method: "POST" })
         if (p) await supabaseAdmin.from("products").update({ stock: Math.max(0, p.stock - it.qty), sold_count: (p.sold_count ?? 0) + it.qty }).eq("id", it.product_id);
       }
     }
+    return { ok: true };
+  });
+
+const bankInput = bankSchema.extend({ token: z.string() });
+export const saveBankDetails = createServerFn({ method: "POST" })
+  .inputValidator((d: z.input<typeof bankInput>) => bankInput.parse(d))
+  .handler(async ({ data }) => {
+    const db = await admin(data.token);
+    const { error } = await db.from("bank_settings").upsert({ id: "store", bank_name: data.name, account_name: data.accountName, account_number: data.accountNumber, updated_at: new Date().toISOString() });
+    if (error) throw new Error(error.message);
     return { ok: true };
   });

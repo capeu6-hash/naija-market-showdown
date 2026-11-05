@@ -11,9 +11,9 @@ import { CATEGORIES, filterProducts, matches, productsQuery, type SortKey } from
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "ShopArena NG — Phones, Shoes, Bags & Gadgets in Lagos" },
-      { name: "description", content: "Shop phones, shoes, bags, fashion and gadgets in Nigeria with fast Lagos delivery and simple bank transfer payment." },
-      { property: "og:title", content: "ShopArena NG — Phones, Shoes, Bags & Gadgets" },
+      { title: "ShopArena NG — Phones, Laptops, Shoes & Gadgets in Lagos" },
+      { name: "description", content: "Shop phones, laptops, shoes, bags, fashion and gadgets in Nigeria with fast Lagos delivery and simple bank transfer payment." },
+      { property: "og:title", content: "ShopArena NG — Phones, Laptops, Shoes & Gadgets" },
       { property: "og:description", content: "Quality products, fast Lagos delivery, pay by bank transfer." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -59,7 +59,7 @@ function ShopView() {
               onChange={(e) => { setTyping(e.target.value); setOpen(true); if (!e.target.value) setQ(""); }}
               onFocus={() => setOpen(true)}
               onBlur={() => setTimeout(() => setOpen(false), 150)}
-              placeholder="Search for phones, shoes, bags..."
+              placeholder="Search for phones, laptops, shoes, bags..."
               aria-label="Search products"
               className="w-full rounded-2xl border-2 border-foreground bg-card py-4 pl-12 pr-24 text-base outline-none focus:ring-2 focus:ring-ring"
             />

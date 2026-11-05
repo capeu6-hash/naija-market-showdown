@@ -19,13 +19,15 @@ export const createOrder = createServerFn({ method: "POST" })
   .inputValidator((d: z.infer<typeof orderInput>) => orderInput.parse(d))
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: bank, error: bankError } = await supabaseAdmin.from("bank_settings").select("bank_name, account_name, account_number").eq("id", "store").single();
+    if (bankError || !bank) throw new Error("Bank details are unavailable. Please try again before paying.");
     const ids = data.items.map((i) => i.id);
     const [{ data: prods, error }, { data: priv }] = await Promise.all([
       supabaseAdmin.from("products").select("id, name, selling_price, stock").in("id", ids),
-      supabaseAdmin.from("product_private").select("product_id, cost_price_private, delivery_cost").in("product_id", ids),
+      supabaseAdmin.from("product_private").select("product_id, cost_price_private, delivery_cost, cost_confirmed").in("product_id", ids),
     ]);
     if (error) throw new Error(error.message);
-    const costs = new Map((priv ?? []).map((p) => [p.product_id, Number(p.cost_price_private) + Number(p.delivery_cost)]));
+    const costs = new Map((priv ?? []).map((p) => [p.product_id, p.cost_confirmed ? Number(p.cost_price_private) + Number(p.delivery_cost) : null]));
     const lines = data.items.map((i) => {
       const p = prods?.find((x) => x.id === i.id);
       if (!p) throw new Error("A product in your cart is no longer available");
@@ -49,7 +51,7 @@ export const createOrder = createServerFn({ method: "POST" })
     if (oe) throw new Error(oe.message);
     const { error: ie } = await supabaseAdmin.from("order_items").insert(lines.map((l) => ({ ...l, order_id: order.id })));
     if (ie) throw new Error(ie.message);
-    return { ref, subtotal, fee, total, lines: lines.map((l) => ({ name: l.product_name, qty: l.qty, price: l.selling_price })) };
+    return { ref, subtotal, fee, total, bank: { name: bank.bank_name, accountName: bank.account_name, accountNumber: bank.account_number }, lines: lines.map((l) => ({ name: l.product_name, qty: l.qty, price: l.selling_price })) };
   });
 
 // Customer says they've transferred. Admin still confirms the money arrived.

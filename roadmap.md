@@ -1,0 +1,3 @@
+- [ ] Add 30 real phones and 30 real laptops linked to GoGo Gadget, with real photos and estimated prices.
+- [ ] Add admin-editable bank details and use saved details at checkout.
+- [ ] Verify catalog, bank settings, and existing tests.

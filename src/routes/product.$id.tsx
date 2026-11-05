@@ -7,11 +7,12 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { ProductCard } from "@/components/ProductCard";
 import { useCart, naira } from "@/lib/cart";
 import { productsQuery } from "@/lib/catalog";
-import { BANK, COUNTRIES, LAGOS_AREAS, NG_STATES, STORE_WHATSAPP, deliveryFee } from "@/lib/delivery";
+import { bankQuery } from "@/lib/bank";
+import { COUNTRIES, LAGOS_AREAS, NG_STATES, STORE_WHATSAPP, deliveryFee } from "@/lib/delivery";
 
 export const Route = createFileRoute("/product/$id")({
   loader: async ({ context, params }) => {
-    const list = await context.queryClient.ensureQueryData(productsQuery);
+    const [list] = await Promise.all([context.queryClient.ensureQueryData(productsQuery), context.queryClient.ensureQueryData(bankQuery)]);
     const p = list.find((x) => x.id === params.id);
     if (!p) throw notFound();
     return { name: p.name, description: p.description ?? "" };
@@ -42,13 +43,16 @@ const label = "mb-1 block text-xs font-semibold text-foreground";
 function ProductPage() {
   const { id } = Route.useParams();
   const { data: products } = useSuspenseQuery(productsQuery);
-  const p = products.find((x) => x.id === id)!;
+  const p = products.find((x) => x.id === id);
+  const { data: bank } = useSuspenseQuery(bankQuery);
   const { add } = useCart();
   const navigate = useNavigate();
-  const gallery = [p.image_url, ...p.images].filter((x): x is string => !!x);
+
   const [active, setActive] = useState(0);
   const [qty, setQty] = useState(1);
   const [d, setD] = useState({ country: "Nigeria", state: "Lagos", town: "", region: "Ikeja", address: "" });
+  if (!p) throw notFound();
+  const gallery = [p.image_url, ...p.images].filter((x): x is string => !!x);
   const isNg = d.country === "Nigeria";
   const fee = deliveryFee(d.country, d.state, d.region);
   const total = p.selling_price * qty + fee;
@@ -57,7 +61,7 @@ function ProductPage() {
   const addToCart = () => add({ id: p.id, name: p.name, selling_price: p.selling_price, stock: p.stock, image_url: p.image_url });
   const addQty = () => { for (let i = 0; i < qty; i++) addToCart(); };
   const wa = () => {
-    const msg = `Hello ShopArena NG, I want to order:\n${qty} x ${p.name} (${naira(p.selling_price)})\nDelivery: ${[d.address, d.region, d.town, d.state, d.country].filter(Boolean).join(", ")}\nDelivery fee: ${naira(fee)}\nTotal: ${naira(total)}\nI will pay by bank transfer to ${BANK.name} ${BANK.accountNumber} (${BANK.accountName}).`;
+    const msg = `Hello ShopArena NG, I want to order:\n${qty} x ${p.name} (${naira(p.selling_price)})\nDelivery: ${[d.address, d.region, d.town, d.state, d.country].filter(Boolean).join(", ")}\nDelivery fee: ${naira(fee)}\nTotal: ${naira(total)}\nI will pay by bank transfer to ${bank.name} ${bank.accountNumber} (${bank.accountName}).`;
     window.open(`https://wa.me/${STORE_WHATSAPP}?text=${encodeURIComponent(msg)}`, "_blank", "noopener");
   };
 
@@ -123,7 +127,7 @@ function ProductPage() {
                 <div className="flex justify-between"><span>Delivery fee</span><span>{naira(fee)}</span></div>
                 <div className="flex justify-between font-bold"><span>Total</span><span>{naira(total)}</span></div>
               </div>
-              <p className="mt-3 text-xs text-muted-foreground">Pay by bank transfer: {BANK.name} · {BANK.accountNumber} · {BANK.accountName}</p>
+              <p className="mt-3 text-xs text-muted-foreground">Pay by bank transfer: {bank.name} · {bank.accountNumber} · {bank.accountName}</p>
               <button onClick={wa} className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl bg-success py-3 text-sm font-bold text-success-foreground">
                 <MessageCircle className="h-4 w-4" /> Confirm order on WhatsApp
               </button>

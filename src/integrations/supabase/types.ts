@@ -14,6 +14,30 @@ export type Database = {
   }
   public: {
     Tables: {
+      bank_settings: {
+        Row: {
+          account_name: string
+          account_number: string
+          bank_name: string
+          id: string
+          updated_at: string
+        }
+        Insert: {
+          account_name: string
+          account_number: string
+          bank_name: string
+          id?: string
+          updated_at?: string
+        }
+        Update: {
+          account_name?: string
+          account_number?: string
+          bank_name?: string
+          id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       order_items: {
         Row: {
           created_at: string
@@ -131,18 +155,21 @@ export type Database = {
       }
       product_private: {
         Row: {
+          cost_confirmed: boolean
           cost_price_private: number
           delivery_cost: number
           product_id: string
           supplier_id: string | null
         }
         Insert: {
+          cost_confirmed?: boolean
           cost_price_private: number
           delivery_cost?: number
           product_id: string
           supplier_id?: string | null
         }
         Update: {
+          cost_confirmed?: boolean
           cost_price_private?: number
           delivery_cost?: number
           product_id?: string
