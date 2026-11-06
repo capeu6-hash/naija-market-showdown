@@ -14,21 +14,6 @@ export type Database = {
   }
   public: {
     Tables: {
-      admin_access: {
-        Row: {
-          identity: string
-          role: string
-        }
-        Insert: {
-          identity: string
-          role?: string
-        }
-        Update: {
-          identity?: string
-          role?: string
-        }
-        Relationships: []
-      }
       bank_settings: {
         Row: {
           account_name: string
@@ -57,7 +42,6 @@ export type Database = {
         Row: {
           created_at: string
           id: string
-          image_url: string | null
           order_id: string
           product_id: string | null
           product_name: string
@@ -68,7 +52,6 @@ export type Database = {
         Insert: {
           created_at?: string
           id?: string
-          image_url?: string | null
           order_id: string
           product_id?: string | null
           product_name: string
@@ -79,7 +62,6 @@ export type Database = {
         Update: {
           created_at?: string
           id?: string
-          image_url?: string | null
           order_id?: string
           product_id?: string | null
           product_name?: string
@@ -119,8 +101,6 @@ export type Database = {
           customer_email: string | null
           customer_name: string
           delivery_fee: number
-          estimated_delivery: string | null
-          fulfillment_status: string
           id: string
           order_ref: string | null
           paystack_ref: string | null
@@ -140,8 +120,6 @@ export type Database = {
           customer_email?: string | null
           customer_name: string
           delivery_fee?: number
-          estimated_delivery?: string | null
-          fulfillment_status?: string
           id?: string
           order_ref?: string | null
           paystack_ref?: string | null
@@ -161,8 +139,6 @@ export type Database = {
           customer_email?: string | null
           customer_name?: string
           delivery_fee?: number
-          estimated_delivery?: string | null
-          fulfillment_status?: string
           id?: string
           order_ref?: string | null
           paystack_ref?: string | null
@@ -228,8 +204,6 @@ export type Database = {
           category: string
           created_at: string
           description: string | null
-          estimated_price: boolean
-          hidden: boolean
           id: string
           image_url: string | null
           images: string[]
@@ -238,14 +212,11 @@ export type Database = {
           selling_price: number
           sold_count: number
           stock: number
-          supplier_name: string | null
         }
         Insert: {
           category?: string
           created_at?: string
           description?: string | null
-          estimated_price?: boolean
-          hidden?: boolean
           id?: string
           image_url?: string | null
           images?: string[]
@@ -254,14 +225,11 @@ export type Database = {
           selling_price: number
           sold_count?: number
           stock?: number
-          supplier_name?: string | null
         }
         Update: {
           category?: string
           created_at?: string
           description?: string | null
-          estimated_price?: boolean
-          hidden?: boolean
           id?: string
           image_url?: string | null
           images?: string[]
@@ -270,7 +238,6 @@ export type Database = {
           selling_price?: number
           sold_count?: number
           stock?: number
-          supplier_name?: string | null
         }
         Relationships: []
       }
@@ -304,27 +271,6 @@ export type Database = {
         }
         Relationships: []
       }
-      store_settings: {
-        Row: {
-          delivery_fees: Json
-          id: string
-          shop_name: string
-          whatsapp: string
-        }
-        Insert: {
-          delivery_fees?: Json
-          id?: string
-          shop_name?: string
-          whatsapp?: string
-        }
-        Update: {
-          delivery_fees?: Json
-          id?: string
-          shop_name?: string
-          whatsapp?: string
-        }
-        Relationships: []
-      }
       suppliers: {
         Row: {
           business_name: string
@@ -352,21 +298,6 @@ export type Database = {
           location?: string | null
           supplies?: string | null
           whatsapp?: string | null
-        }
-        Relationships: []
-      }
-      user_access: {
-        Row: {
-          blocked: boolean
-          user_id: string
-        }
-        Insert: {
-          blocked?: boolean
-          user_id: string
-        }
-        Update: {
-          blocked?: boolean
-          user_id?: string
         }
         Relationships: []
       }
