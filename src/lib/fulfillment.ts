@@ -1,0 +1,4 @@
+export const fulfillmentSteps = ['placed', 'confirmed', 'packed', 'shipped', 'delivered'] as const;
+export const fulfillmentLabels: Record<string, string> = { placed: 'Order Placed', confirmed: 'Order Confirmed', packed: 'Packed', shipped: 'Shipped / Out for Delivery', delivered: 'Delivered', cancelled: 'Cancelled' };
+export function trackingProgress(status: string) { return fulfillmentSteps.indexOf(status as typeof fulfillmentSteps[number]); }
+export function customerPhone(phone: string) { const digits = phone.replace(/\D/g, ''); return digits.startsWith('0') ? `234${digits.slice(1)}` : digits; }
