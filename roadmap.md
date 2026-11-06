@@ -1,3 +1,6 @@
-- [ ] Add 30 real phones and 30 real laptops linked to GoGo Gadget, with real photos and estimated prices.
-- [ ] Add admin-editable bank details and use saved details at checkout.
-- [ ] Verify catalog, bank settings, and existing tests.
+- [ ] Add the specified 30 phones and 30 laptops linked to GoGo Gadget; retain existing 12 products.
+- [ ] Add customer email accounts, login/reset, account-only shopping and secure order ownership.
+- [ ] Redesign black-and-gold shop, header, banners and footer.
+- [ ] Extend admin with database authorization, sidebar, users, status/visibility management and settings.
+- [ ] Add live order tracking and customer care.
+- [ ] Verify authenticated checkout, catalog, admin, tracking, bank settings, mobile layout and tests.
