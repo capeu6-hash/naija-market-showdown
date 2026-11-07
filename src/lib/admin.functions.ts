@@ -9,13 +9,25 @@ export const adminLogin = createServerFn({ method: "POST" })
     z.object({ email: z.string().max(200), password: z.string().max(200) }).parse(d),
   )
   .handler(async ({ data }) => {
+    const email = data.email.trim().toLowerCase();
+    const { assertLoginAllowed, recordLoginFailure, clearLoginFailures } = await import("./auth-rate.server");
+    await assertLoginAllowed("admin", email);
     const { signAdminToken } = await import("./admin-token.server");
     const envEmail = (process.env["ADMIN_EMAIL"] ?? "").trim().toLowerCase();
     const envPass = (process.env["ADMIN_PASSWORD"] ?? "").trim();
-    const okEmail = !!envEmail && data.email.trim().toLowerCase() === envEmail;
+    const okEmail = !!envEmail && email === envEmail;
     const okPass = !!envPass && data.password.trim() === envPass;
-    if (!okEmail || !okPass) return { ok: false as const };
-    return { ok: true as const, token: await signAdminToken() };
+    if (!okEmail || !okPass) {
+      await recordLoginFailure("admin", email);
+      return { ok: false as const, error: "Access Denied. Admins Only" };
+    }
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: existingAdmins } = await supabaseAdmin.from("admin_access").select("identity").eq("role", "admin").limit(1);
+    if (!existingAdmins?.length) await supabaseAdmin.from("admin_access").insert({ identity: envEmail, role: "admin" });
+    const { data: role } = await supabaseAdmin.from("admin_access").select("role").eq("identity", envEmail).eq("role", "admin").maybeSingle();
+    if (!role) return { ok: false as const, error: "Access Denied. Admins Only" };
+    await clearLoginFailures("admin", email);
+    return { ok: true as const, token: await signAdminToken(envEmail) };
   });
 
 async function admin(token: string) {

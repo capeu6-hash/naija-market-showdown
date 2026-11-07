@@ -4,14 +4,16 @@ import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
 const credentials = z.object({ email: z.string().trim().email().max(200), password: z.string().min(1).max(200) });
-const signup = credentials.extend({
+const signup = z.object({
+  email: z.string().trim().email().max(200),
+  password: z.string().min(8).max(200),
   fullName: z.string().trim().min(2).max(120),
   phone: z.string().trim().regex(/^\+234\d{10}$/, "Use the format +2348012345678"),
   confirmPassword: z.string().min(1).max(200),
 }).refine((v) => v.password === v.confirmPassword, { message: "Passwords do not match" });
 
 export const signUpCustomer = createServerFn({ method: "POST" })
-  .inputValidator((d: z.input<typeof signup>) => signup.extend({ password: z.string().min(8).max(200) }).parse(d))
+  .inputValidator((d: z.input<typeof signup>) => signup.parse(d))
   .handler(async ({ data }) => {
     const { createServerAuthClient } = await import("./public-auth.server");
     const client = createServerAuthClient(process.env["SUPABASE_URL"]!, process.env["SUPABASE_PUBLISHABLE_KEY"]!);
