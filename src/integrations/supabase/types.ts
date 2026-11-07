@@ -14,6 +14,21 @@ export type Database = {
   }
   public: {
     Tables: {
+      admin_access: {
+        Row: {
+          identity: string
+          role: string
+        }
+        Insert: {
+          identity: string
+          role?: string
+        }
+        Update: {
+          identity?: string
+          role?: string
+        }
+        Relationships: []
+      }
       bank_settings: {
         Row: {
           account_name: string
@@ -38,10 +53,32 @@ export type Database = {
         }
         Relationships: []
       }
+      login_attempts: {
+        Row: {
+          attempt_key: string
+          failures: number
+          locked_until: string | null
+          updated_at: string
+        }
+        Insert: {
+          attempt_key: string
+          failures?: number
+          locked_until?: string | null
+          updated_at?: string
+        }
+        Update: {
+          attempt_key?: string
+          failures?: number
+          locked_until?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       order_items: {
         Row: {
           created_at: string
           id: string
+          image_url: string | null
           order_id: string
           product_id: string | null
           product_name: string
@@ -52,6 +89,7 @@ export type Database = {
         Insert: {
           created_at?: string
           id?: string
+          image_url?: string | null
           order_id: string
           product_id?: string | null
           product_name: string
@@ -62,6 +100,7 @@ export type Database = {
         Update: {
           created_at?: string
           id?: string
+          image_url?: string | null
           order_id?: string
           product_id?: string | null
           product_name?: string
@@ -101,6 +140,8 @@ export type Database = {
           customer_email: string | null
           customer_name: string
           delivery_fee: number
+          estimated_delivery: string | null
+          fulfillment_status: string
           id: string
           order_ref: string | null
           paystack_ref: string | null
@@ -111,6 +152,7 @@ export type Database = {
           subtotal: number
           total: number
           town: string | null
+          updated_at: string
           user_id: string | null
         }
         Insert: {
@@ -120,6 +162,8 @@ export type Database = {
           customer_email?: string | null
           customer_name: string
           delivery_fee?: number
+          estimated_delivery?: string | null
+          fulfillment_status?: string
           id?: string
           order_ref?: string | null
           paystack_ref?: string | null
@@ -130,6 +174,7 @@ export type Database = {
           subtotal?: number
           total: number
           town?: string | null
+          updated_at?: string
           user_id?: string | null
         }
         Update: {
@@ -139,6 +184,8 @@ export type Database = {
           customer_email?: string | null
           customer_name?: string
           delivery_fee?: number
+          estimated_delivery?: string | null
+          fulfillment_status?: string
           id?: string
           order_ref?: string | null
           paystack_ref?: string | null
@@ -149,6 +196,7 @@ export type Database = {
           subtotal?: number
           total?: number
           town?: string | null
+          updated_at?: string
           user_id?: string | null
         }
         Relationships: []
@@ -204,40 +252,52 @@ export type Database = {
           category: string
           created_at: string
           description: string | null
+          estimated_price: boolean
+          hidden: boolean
           id: string
           image_url: string | null
           images: string[]
           name: string
           old_price: number | null
+          rating: number
           selling_price: number
           sold_count: number
           stock: number
+          supplier_name: string | null
         }
         Insert: {
           category?: string
           created_at?: string
           description?: string | null
+          estimated_price?: boolean
+          hidden?: boolean
           id?: string
           image_url?: string | null
           images?: string[]
           name: string
           old_price?: number | null
+          rating?: number
           selling_price: number
           sold_count?: number
           stock?: number
+          supplier_name?: string | null
         }
         Update: {
           category?: string
           created_at?: string
           description?: string | null
+          estimated_price?: boolean
+          hidden?: boolean
           id?: string
           image_url?: string | null
           images?: string[]
           name?: string
           old_price?: number | null
+          rating?: number
           selling_price?: number
           sold_count?: number
           stock?: number
+          supplier_name?: string | null
         }
         Relationships: []
       }
@@ -271,6 +331,27 @@ export type Database = {
         }
         Relationships: []
       }
+      store_settings: {
+        Row: {
+          delivery_fees: Json
+          id: string
+          shop_name: string
+          whatsapp: string
+        }
+        Insert: {
+          delivery_fees?: Json
+          id?: string
+          shop_name?: string
+          whatsapp?: string
+        }
+        Update: {
+          delivery_fees?: Json
+          id?: string
+          shop_name?: string
+          whatsapp?: string
+        }
+        Relationships: []
+      }
       suppliers: {
         Row: {
           business_name: string
@@ -301,6 +382,69 @@ export type Database = {
         }
         Relationships: []
       }
+      support_messages: {
+        Row: {
+          created_at: string
+          customer_name: string
+          id: string
+          message: string
+          order_ref: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          customer_name: string
+          id?: string
+          message: string
+          order_ref?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          customer_name?: string
+          id?: string
+          message?: string
+          order_ref?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_access: {
+        Row: {
+          blocked: boolean
+          user_id: string
+        }
+        Insert: {
+          blocked?: boolean
+          user_id: string
+        }
+        Update: {
+          blocked?: boolean
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       public_products: {
@@ -313,9 +457,11 @@ export type Database = {
           images: string[] | null
           name: string | null
           old_price: number | null
+          rating: number | null
           selling_price: number | null
           sold_count: number | null
           stock: number | null
+          supplier_name: string | null
         }
         Insert: {
           category?: string | null
@@ -326,9 +472,11 @@ export type Database = {
           images?: string[] | null
           name?: string | null
           old_price?: number | null
+          rating?: number | null
           selling_price?: number | null
           sold_count?: number | null
           stock?: number | null
+          supplier_name?: string | null
         }
         Update: {
           category?: string | null
@@ -339,18 +487,26 @@ export type Database = {
           images?: string[] | null
           name?: string | null
           old_price?: number | null
+          rating?: number | null
           selling_price?: number | null
           sold_count?: number | null
           stock?: number | null
+          supplier_name?: string | null
         }
         Relationships: []
       }
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "user"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -477,6 +633,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "user"],
+    },
   },
 } as const
