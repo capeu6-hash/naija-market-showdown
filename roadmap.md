@@ -1,3 +1,6 @@
-- [ ] Add 30 real phones and 30 real laptops linked to GoGo Gadget, with real photos and estimated prices.
-- [ ] Add admin-editable bank details and use saved details at checkout.
-- [ ] Verify catalog, bank settings, and existing tests.
+- [ ] Add secure customer sign-up/sign-in, mandatory account access, admin-only entry, and five-attempt login lockout.
+- [ ] Build the responsive black-and-gold storefront with the 60-product GoGo Gadget catalog and real product photos.
+- [ ] Connect checkout to customer accounts and add live order tracking with admin-controlled fulfillment statuses.
+- [ ] Rebuild the admin area with overview, products, orders, users, messages, and editable store/bank settings.
+- [ ] Add customer care, WhatsApp support, FAQs, and contact form.
+- [ ] Verify authentication, shopping, checkout, tracking, admin changes, tests, and production build.
