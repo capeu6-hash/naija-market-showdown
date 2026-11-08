@@ -53,6 +53,12 @@
   --color-chart-5: var(--chart-5);
   --color-success: var(--success);
   --color-success-foreground: var(--success-foreground);
+  --color-gold: var(--gold);
+  --color-gold-foreground: var(--gold-foreground);
+  --color-gold-soft: var(--gold-soft);
+  --color-ink: var(--ink);
+  --color-ink-foreground: var(--ink-foreground);
+  --color-ink-muted: var(--ink-muted);
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
@@ -68,6 +74,12 @@
   --radius: 0.625rem;
   --success: oklch(0.527 0.154 150.069);
   --success-foreground: oklch(1 0 0);
+  --gold: oklch(0.79 0.14 84);
+  --gold-foreground: oklch(0.18 0.025 70);
+  --gold-soft: oklch(0.96 0.035 88);
+  --ink: oklch(0.16 0.015 75);
+  --ink-foreground: oklch(0.97 0.01 90);
+  --ink-muted: oklch(0.73 0.025 85);
   --background: oklch(1 0 0);
   --foreground: oklch(0.129 0.042 264.695);
   --card: oklch(1 0 0);
@@ -105,6 +117,12 @@
 .dark {
   --success: oklch(0.627 0.17 149);
   --success-foreground: oklch(1 0 0);
+  --gold: oklch(0.82 0.14 84);
+  --gold-foreground: oklch(0.18 0.025 70);
+  --gold-soft: oklch(0.25 0.035 80);
+  --ink: oklch(0.12 0.015 75);
+  --ink-foreground: oklch(0.97 0.01 90);
+  --ink-muted: oklch(0.73 0.025 85);
   --background: oklch(0.129 0.042 264.695);
   --foreground: oklch(0.984 0.003 247.858);
   --card: oklch(0.208 0.042 265.755);
