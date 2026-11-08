@@ -13,7 +13,7 @@ import { customerReturnPath } from "@/lib/customer-access";
 
 export const Route = createFileRoute("/login")({
   validateSearch: (search: Record<string, unknown>): { redirect?: string } => {
-    const redirect = customerReturnPath(search.redirect);
+    const redirect = customerReturnPath(search["redirect"]);
     return redirect ? { redirect } : {};
   },
   head: () => ({
@@ -46,6 +46,7 @@ function errorMessage(error: unknown) {
 
 function LoginPage() {
   const navigate = useNavigate();
+  const { redirect: returnPath } = Route.useSearch();
   const signIn = useServerFn(signInCustomer);
   const signUp = useServerFn(signUpCustomer);
   const resetPassword = useServerFn(requestPasswordReset);
@@ -81,7 +82,7 @@ function LoginPage() {
         });
         if (sessionError) throw sessionError;
         toast.success("Welcome back to ShopArena NG");
-        await navigate({ to: "/" });
+        await navigate({ to: returnPath ?? "/", replace: true });
       } else if (mode === "sign-up") {
         const result = await signUp({ data: form });
         if (!result.ok) {
