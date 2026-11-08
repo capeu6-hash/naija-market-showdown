@@ -45,7 +45,7 @@ export function SiteHeader() {
                 </button>
               </div>
             ) : (
-              <Link to="/login" className="inline-flex items-center gap-1.5 rounded-lg border border-border px-3 py-2 text-sm font-semibold text-foreground hover:bg-muted">
+              <Link to="/login" aria-label="Sign in" className="inline-flex items-center gap-1.5 rounded-lg border border-border px-3 py-2 text-sm font-semibold text-foreground hover:bg-muted">
                 <UserRound className="h-4 w-4" /> <span className="hidden sm:inline">Sign in</span>
               </Link>
             ))}

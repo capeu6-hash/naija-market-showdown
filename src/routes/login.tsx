@@ -29,7 +29,14 @@ type Mode = "sign-in" | "sign-up" | "forgot";
 const emptyForm = { fullName: "", email: "", phone: "", password: "", confirmPassword: "" };
 
 function errorMessage(error: unknown) {
-  return error instanceof Error && error.message ? error.message : "Something went wrong. Please try again.";
+  if (!(error instanceof Error) || !error.message) return "Something went wrong. Please try again.";
+  try {
+    const parsed = JSON.parse(error.message) as { message?: string }[];
+    if (Array.isArray(parsed) && parsed[0]?.message) return parsed[0].message;
+  } catch {
+    // Server errors that are not validation lists already have readable messages.
+  }
+  return error.message;
 }
 
 function LoginPage() {
