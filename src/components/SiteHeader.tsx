@@ -11,7 +11,7 @@ export function SiteHeader() {
   const { user, ready } = useCustomerSession();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
-  const displayName = (user?.user_metadata?.full_name as string | undefined)?.trim().split(" ")[0] || user?.email?.split("@")[0] || "Account";
+  const displayName = (user?.user_metadata?.["full_name"] as string | undefined)?.trim().split(" ")[0] || user?.email?.split("@")[0] || "Account";
 
   const signOut = async () => {
     await queryClient.cancelQueries();

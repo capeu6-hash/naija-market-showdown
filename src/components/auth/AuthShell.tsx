@@ -9,6 +9,12 @@ type AuthShellProps = {
   children: ReactNode;
 };
 
+const benefits = [
+  { icon: PackageCheck, heading: "Trusted products", text: "Quality phones and laptops from verified suppliers." },
+  { icon: Truck, heading: "Fast nationwide delivery", text: "Clear delivery fees and reliable order updates." },
+  { icon: ShieldCheck, heading: "Secure by design", text: "Your account and personal details stay protected." },
+];
+
 export function AuthShell({ eyebrow, title, description, children }: AuthShellProps) {
   return (
     <div className="grid min-h-screen bg-muted lg:grid-cols-[0.9fr_1.1fr]">
@@ -29,18 +35,14 @@ export function AuthShell({ eyebrow, title, description, children }: AuthShellPr
             One secure account for faster checkout, easy order tracking, and support whenever you need it.
           </p>
           <div className="mt-10 space-y-5">
-            {[
-              [PackageCheck, "Trusted products", "Quality phones and laptops from verified suppliers."],
-              [Truck, "Fast nationwide delivery", "Clear delivery fees and reliable order updates."],
-              [ShieldCheck, "Secure by design", "Your account and personal details stay protected."],
-            ].map(([Icon, heading, text]) => (
-              <div key={heading as string} className="flex items-start gap-4">
+            {benefits.map(({ icon: Icon, heading, text }) => (
+              <div key={heading} className="flex items-start gap-4">
                 <div className="rounded-xl bg-gold/10 p-3 text-gold">
                   <Icon className="h-5 w-5" />
                 </div>
                 <div>
-                  <p className="font-semibold">{heading as string}</p>
-                  <p className="mt-1 text-sm text-ink-muted">{text as string}</p>
+                  <p className="font-semibold">{heading}</p>
+                  <p className="mt-1 text-sm text-ink-muted">{text}</p>
                 </div>
               </div>
             ))}
