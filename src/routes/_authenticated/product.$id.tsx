@@ -10,7 +10,7 @@ import { productsQuery } from "@/lib/catalog";
 import { bankQuery } from "@/lib/bank";
 import { COUNTRIES, LAGOS_AREAS, NG_STATES, STORE_WHATSAPP, deliveryFee } from "@/lib/delivery";
 
-export const Route = createFileRoute("/product/$id")({
+export const Route = createFileRoute("/_authenticated/product/$id")({
   loader: async ({ context, params }) => {
     const [list] = await Promise.all([context.queryClient.ensureQueryData(productsQuery), context.queryClient.ensureQueryData(bankQuery)]);
     const p = list.find((x) => x.id === params.id);

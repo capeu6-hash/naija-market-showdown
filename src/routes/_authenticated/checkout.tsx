@@ -8,7 +8,7 @@ import { useCart, naira } from "@/lib/cart";
 import { createOrder, markTransferSent, getOrderStatus } from "@/lib/shop.functions";
 import { COUNTRIES, LAGOS_AREAS, NG_STATES, STORE_WHATSAPP, deliveryFee } from "@/lib/delivery";
 
-export const Route = createFileRoute("/checkout")({
+export const Route = createFileRoute("/_authenticated/checkout")({
   head: () => ({
     meta: [
       { title: "Checkout — ShopArena NG" },

@@ -1,4 +1,4 @@
-- [ ] Add secure customer sign-up/sign-in, mandatory account access, admin-only entry, and five-attempt login lockout.
+- [x] Add secure customer sign-up/sign-in, mandatory account access, admin-only entry, and five-attempt login lockout.
 - [ ] Build the responsive black-and-gold storefront with the 60-product GoGo Gadget catalog and real product photos.
 - [ ] Connect checkout to customer accounts and add live order tracking with admin-controlled fulfillment statuses.
 - [ ] Rebuild the admin area with overview, products, orders, users, messages, and editable store/bank settings.

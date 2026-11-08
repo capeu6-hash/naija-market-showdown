@@ -14,4 +14,21 @@ describe("App routing", () => {
 
     expect(matches.at(-1)?.routeId).not.toBe(rootRouteId);
   });
+
+  it.each(["/", "/checkout", "/product/example-product"])(
+    "requires a customer account before opening %s",
+    (path) => {
+      const router = createRouter({ routeTree, context: { queryClient: new QueryClient() } });
+      const matches = router.matchRoutes(path);
+
+      expect(matches.some((match) => match.routeId === "/_authenticated")).toBe(true);
+    },
+  );
+
+  it.each(["/login", "/reset-password", "/admin"])("keeps %s outside the customer gate", (path) => {
+    const router = createRouter({ routeTree, context: { queryClient: new QueryClient() } });
+    const matches = router.matchRoutes(path);
+
+    expect(matches.some((match) => match.routeId === "/_authenticated")).toBe(false);
+  });
 });
