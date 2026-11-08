@@ -9,13 +9,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { requestPasswordReset, signInCustomer, signUpCustomer } from "@/lib/auth.functions";
-import { customerReturnPath } from "@/lib/customer-access";
 
 export const Route = createFileRoute("/login")({
-  validateSearch: (search: Record<string, unknown>): { redirect?: string } => {
-    const redirect = customerReturnPath(search["redirect"]);
-    return redirect ? { redirect } : {};
-  },
   head: () => ({
     meta: [
       { title: "Sign In or Create an Account — ShopArena NG" },
@@ -46,7 +41,6 @@ function errorMessage(error: unknown) {
 
 function LoginPage() {
   const navigate = useNavigate();
-  const { redirect: returnPath } = Route.useSearch();
   const signIn = useServerFn(signInCustomer);
   const signUp = useServerFn(signUpCustomer);
   const resetPassword = useServerFn(requestPasswordReset);
@@ -82,7 +76,7 @@ function LoginPage() {
         });
         if (sessionError) throw sessionError;
         toast.success("Welcome back to ShopArena NG");
-        await navigate({ to: returnPath ?? "/", replace: true });
+        await navigate({ to: "/" });
       } else if (mode === "sign-up") {
         const result = await signUp({ data: form });
         if (!result.ok) {

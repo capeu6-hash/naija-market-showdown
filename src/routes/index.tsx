@@ -8,7 +8,7 @@ import { Slider } from "@/components/ui/slider";
 import { useCart, naira } from "@/lib/cart";
 import { CATEGORIES, filterProducts, matches, productsQuery, type SortKey } from "@/lib/catalog";
 
-export const Route = createFileRoute("/_authenticated/")({
+export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "ShopArena NG — Phones, Laptops, Shoes & Gadgets in Lagos" },
