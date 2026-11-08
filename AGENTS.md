@@ -15,3 +15,4 @@
 - Search/filter/sort runs client-side over `public_products` (`src/lib/catalog.ts`). Why: small catalog, instant suggestions without extra requests.
 - Bank details live in the singleton bank_settings row; only HMAC-authorized admin functions may write, public views read, and checkout snapshots the current details when creating an order. Why: edits persist without exposing payment-setting writes to customers.
 - Unconfirmed supplier costs use product_private.cost_confirmed=false and display no profit until confirmed. Why: estimated catalog prices must not become fictitious margins.
+- Customer shop, product, and checkout routes live under the integration-managed `_authenticated` layout; account and admin routes stay public at top level. Why: requires sign-in before shopping without changing customer URLs.
