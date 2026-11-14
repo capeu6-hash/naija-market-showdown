@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { requestPasswordReset, signInCustomer, signUpCustomer } from "@/lib/auth.functions";
+import { adminLogin } from "@/lib/admin.functions";
 
 export const Route = createFileRoute("/login")({
   head: () => ({
@@ -181,8 +182,48 @@ function LoginPage() {
               <LockKeyhole className="h-3.5 w-3.5" /> Five failed attempts temporarily lock your login.
             </div>
           )}
+          {mode === "sign-in" && <AdminBox />}
         </>
       )}
     </AuthShell>
+  );
+}
+
+function AdminBox() {
+  const navigate = useNavigate();
+  const login = useServerFn(adminLogin);
+  const [open, setOpen] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState("");
+  const submit = async (e: FormEvent) => {
+    e.preventDefault();
+    setBusy(true); setErr("");
+    try {
+      const r = await login({ data: { email, password } });
+      if (!r.ok) { setErr(r.error); return; }
+      localStorage.setItem("shoparena_admin", r.token);
+      toast.success("Welcome back, admin");
+      await navigate({ to: "/admin" });
+    } catch (e2) { setErr(errorMessage(e2)); } finally { setBusy(false); }
+  };
+  return (
+    <div className="mt-6">
+      <div className="flex items-center gap-3 text-xs font-bold uppercase tracking-widest text-muted-foreground"><span className="h-px flex-1 bg-border" />or<span className="h-px flex-1 bg-border" /></div>
+      <div className="mt-4 rounded-2xl border border-gold/40 bg-gold-soft p-4">
+        {!open ? (
+          <Button type="button" variant="outline" className="h-11 w-full rounded-xl font-bold" onClick={() => setOpen(true)}>Sign In As Admin</Button>
+        ) : (
+          <form onSubmit={submit} className="space-y-3">
+            <p className="text-sm font-extrabold">Admin sign in</p>
+            <Input type="email" required placeholder="Admin email" value={email} onChange={(e) => setEmail(e.target.value)} className="h-11 rounded-xl bg-background" />
+            <Input type="password" required placeholder="Admin password" value={password} onChange={(e) => setPassword(e.target.value)} className="h-11 rounded-xl bg-background" />
+            {err && <p role="alert" className="text-sm font-semibold text-destructive">{err}</p>}
+            <Button type="submit" disabled={busy} className="h-11 w-full rounded-xl font-bold">{busy ? "Checking…" : "Sign In As Admin"}</Button>
+          </form>
+        )}
+      </div>
+    </div>
   );
 }
