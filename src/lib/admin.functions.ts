@@ -224,3 +224,12 @@ export const saveBankDetails = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     return { ok: true };
   });
+
+export const setProductHidden = createServerFn({ method: "POST" })
+  .inputValidator((d: { token: string; id: string; hidden: boolean }) => z.object({ token: z.string(), id: z.string().uuid(), hidden: z.boolean() }).parse(d))
+  .handler(async ({ data }) => {
+    const db = await admin(data.token);
+    const { error } = await db.from("products").update({ hidden: data.hidden }).eq("id", data.id);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });

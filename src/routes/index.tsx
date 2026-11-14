@@ -1,7 +1,9 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
-import { Search, X } from "lucide-react";
+import { Search, X, Smartphone, Laptop, ShieldCheck, Truck, BadgeCheck } from "lucide-react";
+import { SiteFooter } from "@/components/SiteFooter";
+import heroImg from "@/assets/hero-gadgets.jpg";
 import { SiteHeader } from "@/components/SiteHeader";
 import { ProductCard } from "@/components/ProductCard";
 import { Slider } from "@/components/ui/slider";
@@ -43,14 +45,59 @@ function ShopView() {
     return [...(inCat.length ? inCat : products)].sort((a, b) => b.sold_count - a.sold_count).slice(0, 4);
   }, [results.length, products, category]);
 
+  const featured = useMemo(() => [...products].sort((a, b) => b.selling_price - a.selling_price).slice(0, 8), [products]);
+  const best = useMemo(() => [...products].sort((a, b) => b.sold_count - a.sold_count || b.stock - a.stock).slice(0, 8), [products]);
   const submit = (v: string) => { setQ(v); setTyping(v); setOpen(false); };
   const chip = (active: boolean) =>
     `shrink-0 rounded-full border px-4 py-1.5 text-sm font-semibold transition ${active ? "border-foreground bg-foreground text-background" : "border-border bg-card text-foreground hover:bg-secondary"}`;
 
   return (
-    <div className="min-h-screen bg-muted pb-24">
+    <div className="min-h-screen bg-muted pb-16 md:pb-0">
       <SiteHeader />
-      <section className="bg-background px-4 pb-4 pt-5">
+      <section className="relative overflow-hidden bg-ink text-ink-foreground">
+        <img src={heroImg} alt="" width={1600} height={800} className="absolute inset-0 h-full w-full object-cover object-right opacity-70" />
+        <div className="relative mx-auto max-w-6xl px-4 py-14 md:py-24">
+          <p className="text-xs font-bold uppercase tracking-[0.3em] text-gold">New season deals</p>
+          <h1 className="mt-3 max-w-xl text-4xl font-extrabold leading-tight md:text-6xl">Premium phones & laptops, delivered fast.</h1>
+          <p className="mt-4 max-w-md text-ink-muted">Genuine devices from GoGo Gadget, clear delivery fees and simple bank transfer payment.</p>
+          <div className="mt-6 flex flex-wrap gap-3">
+            <button onClick={() => { setCategory("Phones"); document.getElementById("shop")?.scrollIntoView({ behavior: "smooth" }); }} className="rounded-full bg-gold px-6 py-3 font-bold text-gold-foreground transition hover:scale-105">Shop Phones</button>
+            <button onClick={() => { setCategory("Laptops"); document.getElementById("shop")?.scrollIntoView({ behavior: "smooth" }); }} className="rounded-full border border-gold px-6 py-3 font-bold text-gold transition hover:bg-gold hover:text-gold-foreground">Shop Laptops</button>
+          </div>
+        </div>
+      </section>
+      <section className="mx-auto -mt-6 grid max-w-6xl grid-cols-2 gap-3 px-4 md:grid-cols-4">
+        {[{ c: "Phones", i: Smartphone }, { c: "Laptops", i: Laptop }].map(({ c, i: I }) => (
+          <button key={c} onClick={() => { setCategory(c); document.getElementById("shop")?.scrollIntoView({ behavior: "smooth" }); }} className="relative flex items-center gap-3 rounded-2xl bg-card p-4 text-left shadow-md transition hover:-translate-y-0.5 hover:shadow-lg">
+            <span className="rounded-xl bg-gold-soft p-2.5"><I className="h-5 w-5 text-gold-foreground" /></span>
+            <span><span className="block font-extrabold">{c}</span><span className="text-xs text-muted-foreground">{products.filter((p) => p.category === c).length} items</span></span>
+          </button>
+        ))}
+        {[{ t: "Fast delivery", s: "Lagos 24-48hrs", i: Truck }, { t: "Genuine", s: "7-day returns", i: ShieldCheck }].map(({ t, s, i: I }) => (
+          <div key={t} className="relative flex items-center gap-3 rounded-2xl bg-card p-4 shadow-md">
+            <span className="rounded-xl bg-secondary p-2.5"><I className="h-5 w-5" /></span>
+            <span><span className="block font-extrabold">{t}</span><span className="text-xs text-muted-foreground">{s}</span></span>
+          </div>
+        ))}
+      </section>
+      {products.length > 0 && (
+        <>
+          <Shelf title="Featured Products" items={featured} />
+          <Shelf title="Best Sellers" items={best} />
+          <section className="mx-auto max-w-6xl px-4 pt-8">
+            <div className="flex flex-col items-start gap-4 rounded-3xl bg-ink p-6 text-ink-foreground md:flex-row md:items-center md:justify-between md:p-8">
+              <div className="flex items-center gap-4">
+                <span className="rounded-2xl bg-gold p-3"><BadgeCheck className="h-7 w-7 text-gold-foreground" /></span>
+                <div><p className="text-xl font-extrabold md:text-2xl">All Products Supplied by GoGo Gadget</p><p className="text-sm text-ink-muted">Trusted supplier · genuine devices · quality checked before delivery</p></div>
+              </div>
+              <span className="rounded-full border border-gold px-4 py-1.5 text-sm font-bold text-gold">Trusted Supplier</span>
+            </div>
+          </section>
+        </>
+      )}
+      <div id="shop" className="h-6" />
+      <section className="mx-auto max-w-6xl rounded-3xl bg-background px-4 pb-4 pt-5 shadow-sm md:px-6">
+        <h2 className="mx-auto mb-3 max-w-3xl text-xl font-extrabold">Browse all products</h2>
         <div className="mx-auto max-w-3xl">
           <form onSubmit={(e) => { e.preventDefault(); submit(typing); }} className="relative">
             <Search className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
@@ -128,6 +175,7 @@ function ShopView() {
           </>
         )}
       </main>
+      <SiteFooter />
       {count > 0 && (
         <div className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-background p-3 md:hidden">
           <Link to="/checkout" className="block rounded-lg bg-success py-3 text-center font-semibold text-success-foreground">
@@ -136,5 +184,16 @@ function ShopView() {
         </div>
       )}
     </div>
+  );
+}
+
+function Shelf({ title, items }: { title: string; items: ReturnType<typeof filterProducts> }) {
+  return (
+    <section className="mx-auto max-w-6xl px-4 pt-8">
+      <h2 className="mb-3 text-xl font-extrabold">{title}</h2>
+      <div className="-mx-4 flex snap-x gap-3 overflow-x-auto px-4 pb-2">
+        {items.map((p) => <div key={p.id} className="w-44 shrink-0 snap-start md:w-56"><ProductCard p={p} /></div>)}
+      </div>
+    </section>
   );
 }
